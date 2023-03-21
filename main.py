@@ -15,7 +15,6 @@ def displayMatrix(mat):
         print()
     print()
 
-
 def defenseAttack00():
     return [0, 0]
 
@@ -80,6 +79,7 @@ for index, row in df.iterrows():
 
     # Define a function to calculate the expected payoff for a given player and strategy profile
     def expected_payoff(payoff_matrix, player, strategy_profile):
+        
         opponent = 1 - player
         
         sum_ = 0
@@ -92,12 +92,14 @@ for index, row in df.iterrows():
         return sum_ + b + c
 
     # Define a function to find the best response for a given player and opponent strategy
-    def best_response(payoff_matrix, player, opponent_strategy):
+    def best_response(row, payoff_matrix, player, opponent_strategy):
         best_payoff = float('-inf')
         best_strategy = None
         for i in range(3):
             strategy_profile = (i, opponent_strategy)
-            payoff = random.randint(1, 100) + expected_payoff(payoff_matrix, player, strategy_profile)
+            sum_ = row['g'] + row['cm1'] + row['cm2'] + row['ci1'] + row['ci2'] + row['l'] + row['a'] + row['b']
+            payoff = random.randint(1, int(sum_)) + expected_payoff(payoff_matrix, player, strategy_profile)
+            # payoff = random.randint(1, 100) + expected_payoff(payoff_matrix, player, strategy_profile)
             if payoff > best_payoff:
                 best_payoff = payoff
                 best_strategy = i
@@ -108,11 +110,15 @@ for index, row in df.iterrows():
     for i in range(3):
         for j in range(3):
             strategy_profile = (i, j)
-            if (best_response(payoff_matrix, 0, j) == i) and (best_response(payoff_matrix, 1, i) == j):
+            if (best_response(row, payoff_matrix, 0, j) == i) and (best_response(row, payoff_matrix, 1, i) == j):
                 nash_equilibria.append(strategy_profile)
 
     # Print the Nash equilibria
-    print("The Nash equilibria are: ")
+    print("The Nash equilibria are: ", end=" ")
+    if(not len(nash_equilibria)):
+        print("No nash equilibria.", end="")
+    else:
+        print("[ " + str(len(nash_equilibria)) + " ]", end=" ")
     for eq in nash_equilibria:
-        print(eq)
-    
+        print(eq, end=" ")
+    print()
